@@ -122,18 +122,26 @@ export async function POST(req: NextRequest) {
     const detailLine = slipCounter[slipNo]
 
     const taxStr = String(r[IN_COL.TAX] ?? '').trim()
-    // 課10 → taxRate=10, reduced=0; 課8* → taxRate=8, reduced=1
+    // 課10 → taxRate=10, reduced=0; 課8* → taxRate=8, reduced=1; 非 → 非課税, taxRate=10
     let taxRate: number
     let reducedTax: number
-    if (taxStr === '課10') {
+    let taxCategory: string
+    if (taxStr === '非') {
       taxRate = 10
       reducedTax = 0
+      taxCategory = '非課税'
+    } else if (taxStr === '課10') {
+      taxRate = 10
+      reducedTax = 0
+      taxCategory = TAX_CATEGORY
     } else if (taxStr.startsWith('課8')) {
       taxRate = 8
       reducedTax = 1
+      taxCategory = TAX_CATEGORY
     } else {
       taxRate = 0
       reducedTax = 0
+      taxCategory = TAX_CATEGORY
     }
 
     const salesDate = toYYMMDD(r[IN_COL.SALES_DATE])
@@ -151,10 +159,12 @@ export async function POST(req: NextRequest) {
       '',                      // J: サイズ名
       '',                      // K: メーカー品番
       DEST_CODE,               // L: 納品先コード
-      TAX_CATEGORY,            // M: 税区分
+      taxCategory,             // M: 税区分
       taxRate,                 // N: 税率
       r[IN_COL.QTY],          // O: 数量
-      r[IN_COL.UNIT],         // P: 単位
+      (String(r[IN_COL.PRODUCT_CD] ?? '').trim() === '0020000000000' || productName === '返品手数料')
+        ? '個'
+        : r[IN_COL.UNIT],    // P: 単位
       r[IN_COL.UNIT_PRICE],   // Q: 単価
       r[IN_COL.AMOUNT],       // R: 金額
       '',                      // S: 売上単価

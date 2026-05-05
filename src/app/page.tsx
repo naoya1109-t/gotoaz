@@ -152,7 +152,7 @@ export default function Home() {
     <div style={styles.container}>
       <div style={styles.card}>
         <h1 style={styles.title}>納品書変換ツール</h1>
-        <p style={styles.subtitle}>納品書ExcelファイルをアップロードAし、実績表フォーマットに変換してダウンロードします</p>
+        <p style={styles.subtitle}>納品書Excelファイルをアップロードし、ゴトウ・アズ・プランニング様用にフォーマットに変換してダウンロードします</p>
 
         <div
           style={styles.dropzone}

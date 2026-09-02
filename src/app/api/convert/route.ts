@@ -50,10 +50,13 @@ const OUTPUT_HEADERS = [
   '元の仕入計上日', // U
 ]
 
-const SUPPLIER_CODE = 976
+const SUPPLIER_CODE_DEFAULT = 976
+const SUPPLIER_CODE_ATLIFE = 975
 const DEST_CODE = 317876
 const TAX_CATEGORY = '外税'
 const TRADE_TYPE = 1
+const TRADE_TYPE_RETURN = 5
+const TRADE_TYPE_PRICE_ADJUST = 6
 
 // Excelシリアル日付値を yy/mm/dd 文字列に変換
 function toYYMMDD(val: unknown): string {
@@ -87,6 +90,10 @@ export async function POST(req: NextRequest) {
   const sheetName = wb.SheetNames[0]
   const ws = wb.Sheets[sheetName]
   const rows: unknown[][] = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' })
+
+  // A1の文字列に「アットライフ」が含まれる場合は仕入先コードを975にする
+  const a1Value = String(rows[0]?.[0] ?? '')
+  const supplierCode = a1Value.includes('アットライフ') ? SUPPLIER_CODE_ATLIFE : SUPPLIER_CODE_DEFAULT
 
   // Find header row (look for row containing 商品名 in H column)
   let headerRowIdx = -1
@@ -145,13 +152,20 @@ export async function POST(req: NextRequest) {
     }
 
     const salesDate = toYYMMDD(r[IN_COL.SALES_DATE])
+    const qty = Number(r[IN_COL.QTY])
+    const unitPrice = Number(r[IN_COL.UNIT_PRICE])
+    const tradeType = qty < 0
+      ? TRADE_TYPE_RETURN
+      : unitPrice < 0
+        ? TRADE_TYPE_PRICE_ADJUST
+        : TRADE_TYPE
 
     const outRow = [
-      SUPPLIER_CODE,           // A: 仕入先コード
+      supplierCode,            // A: 仕入先コード
       salesDate,               // B: 納品日
       slipNo,                  // C: 納品伝票No
       detailLine,              // D: 納品明細行
-      TRADE_TYPE,              // E: 仕入取引区分
+      tradeType,               // E: 仕入取引区分
       r[IN_COL.PRODUCT_CD],   // F: 仕入先商品コード
       productName,             // G: 商品名
       r[IN_COL.SPEC],         // H: 仕様

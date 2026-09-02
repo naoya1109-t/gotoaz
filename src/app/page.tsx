@@ -202,6 +202,9 @@ export default function Home() {
           <p style={styles.ruleItem}>・H列「商品名」→ 新ファイルG列「商品名」</p>
           <p style={styles.ruleItem}>・N列「税」→ 新ファイルT列「軽減税率区分」（課10 = 0、課8* = 1）</p>
           <p style={styles.ruleItem}>・N列「税」→ 新ファイルN列「税率」（課10 = 10、課8* = 8）</p>
+          <p style={styles.ruleItem}>・A1に「アットライフ」を含む場合、新ファイルA列「仕入先コード」= 975（それ以外は976）</p>
+          <p style={styles.ruleItem}>・J列「数量」がマイナスの場合、新ファイルE列「仕入取引区分」= 5</p>
+          <p style={styles.ruleItem}>・L列「単価」がマイナスの場合、新ファイルE列「仕入取引区分」= 6</p>
         </div>
       </div>
     </div>

@@ -57,6 +57,7 @@ const TAX_CATEGORY = '外税'
 const TRADE_TYPE = 1
 const TRADE_TYPE_RETURN = 5
 const TRADE_TYPE_PRICE_ADJUST = 6
+const PRICE_ADJUST_PRODUCT_CD = '0040000000000'
 
 // Excelシリアル日付値を yy/mm/dd 文字列に変換
 function toYYMMDD(val: unknown): string {
@@ -166,7 +167,9 @@ export async function POST(req: NextRequest) {
       slipNo,                  // C: 納品伝票No
       detailLine,              // D: 納品明細行
       tradeType,               // E: 仕入取引区分
-      r[IN_COL.PRODUCT_CD],   // F: 仕入先商品コード
+      tradeType === TRADE_TYPE_PRICE_ADJUST
+        ? PRICE_ADJUST_PRODUCT_CD
+        : r[IN_COL.PRODUCT_CD], // F: 仕入先商品コード
       productName,             // G: 商品名
       r[IN_COL.SPEC],         // H: 仕様
       '',                      // I: カラー名

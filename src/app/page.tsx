@@ -242,7 +242,7 @@ export default function Home() {
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h1 style={styles.title}>納品書変換ツール</h1>
+        <h1 style={styles.title}>請求書変換ツール</h1>
         <p style={styles.subtitle}>請求明細表Excelファイルをアップロードし、ゴトウ・アズ・プランニング様用にフォーマットに変換してダウンロードします</p>
 
         {SLOTS.map((s) => (

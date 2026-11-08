@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: '納品書変換ツール',
+  title: '請求書変換ツール',
   description: '納品書Excelファイルを実績表フォーマットに変換します',
 }
 
